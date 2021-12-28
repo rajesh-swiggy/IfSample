@@ -521,12 +521,12 @@
   ],
   "variable": [
     {
-      "id": "b1eafe36-d2fe-4d58-a2dd-56d77dd76de1",
+      "id": "c9291372-3a6a-45cd-b33b-1b15b2c05537",
       "key": "feature",
       "value": "REMITTANCE"
     },
     {
-      "id": "2830b5a3-3abe-4c5e-b0da-dc2c4270d1f5",
+      "id": "d1b6714b-a29a-4101-9f17-1bdf44aa97d9",
       "key": "bootstrapCollection",
       "value": "true"
     }
