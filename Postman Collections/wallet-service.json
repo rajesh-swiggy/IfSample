@@ -501,7 +501,7 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": null
+            "url": "www.google.com"
           },
           "response": []
         }
@@ -535,12 +535,12 @@
   ],
   "variable": [
     {
-      "id": "4d23d149-b94e-4d18-b0eb-db512b9be1e4",
+      "id": "8efaccca-9297-42a7-9ddb-f094bf733895",
       "key": "feature",
       "value": "REMITTANCE"
     },
     {
-      "id": "c504cba5-b860-45df-b8c2-a83d4574d3e4",
+      "id": "8ad661f7-e6b5-462f-8fb9-ad443397c0fb",
       "key": "bootstrapCollection",
       "value": "true"
     }
