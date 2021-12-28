@@ -493,7 +493,7 @@
       "name": "test",
       "item": [
         {
-          "name": "New Request",
+          "name": "PostmanTestingRajesh",
           "id": "11ca5932-1177-4474-8ea0-29e877956ff2",
           "protocolProfileBehavior": {
             "disableBodyPruning": true
@@ -535,12 +535,12 @@
   ],
   "variable": [
     {
-      "id": "d98665ba-aa5f-42b9-b96b-260355c8105c",
+      "id": "4d23d149-b94e-4d18-b0eb-db512b9be1e4",
       "key": "feature",
       "value": "REMITTANCE"
     },
     {
-      "id": "3d1df582-0fcd-46bc-8e1d-e6b523dfa815",
+      "id": "c504cba5-b860-45df-b8c2-a83d4574d3e4",
       "key": "bootstrapCollection",
       "value": "true"
     }
