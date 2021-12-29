@@ -24,6 +24,19 @@
             ],
             "type": "text/javascript"
           }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "id": "0c740233-3066-4027-99f2-112cdf929246",
+            "exec": [
+              "let firstName = pm.variables.replaceIn(\"{{$randomFirstName}}\");",
+              "let lastName = pm.variables.replaceIn(\"{{$randomLastName}}\");",
+              "pm.collectionVariables.set(\"first_name1\", firstName);",
+              "pm.collectionVariables.set(\"last_name1\", lastName);"
+            ],
+            "type": "text/javascript"
+          }
         }
       ],
       "id": "32be3e1f-2cb4-4b98-8205-1b9b0e630c49",
@@ -34,7 +47,7 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "https://postman-echo.com/get?foo1={{$randomFirstName}}&foo2={{$randomLastName}}",
+          "raw": "https://postman-echo.com/get?foo1={{last_name1}}&foo2={{first_name1}}",
           "protocol": "https",
           "host": [
             "postman-echo",
@@ -46,11 +59,11 @@
           "query": [
             {
               "key": "foo1",
-              "value": "{{$randomFirstName}}"
+              "value": "{{last_name1}}"
             },
             {
               "key": "foo2",
-              "value": "{{$randomLastName}}"
+              "value": "{{first_name1}}"
             }
           ]
         },
@@ -135,22 +148,22 @@
   ],
   "variable": [
     {
-      "id": "e36b574f-9446-4632-81bf-f32572c31912",
+      "id": "1aa4dc7e-7975-46ed-86a9-e99ccdc00fbe",
       "key": "last_name",
       "value": ""
     },
     {
-      "id": "923b0232-d48d-49d6-8885-50786ac05645",
+      "id": "e791a7fc-964a-4e97-bb91-d678f3795a5e",
       "key": "first_name",
       "value": ""
     },
     {
-      "id": "1815fd5e-1215-4c0f-96b4-a4fae04fe1bc",
+      "id": "27856611-8ca7-4f1d-bb62-4835792a9975",
       "key": "first_name1",
       "value": ""
     },
     {
-      "id": "b98ac293-d399-4652-8c2d-b64cab6b7041",
+      "id": "c8a865f6-70dc-4cbd-90a4-27d94f99738b",
       "key": "last_name1",
       "value": ""
     }
