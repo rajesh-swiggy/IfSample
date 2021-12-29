@@ -18,8 +18,8 @@
               "});",
               "",
               "pm.test(\"response body has json with request queries\", function () {",
-              "    pm.response.to.have.jsonBody('args.foo1', 'bar1')",
-              "        .and.have.jsonBody('args.foo2', 'bar2');",
+              "    pm.response.to.have.jsonBody('args.foo1', pm.collectionVariables.get(\"last_name1\"))",
+              "        .and.have.jsonBody('args.foo2', pm.collectionVariables.get(\"first_name1\"));",
               "});"
             ],
             "type": "text/javascript"
@@ -148,22 +148,22 @@
   ],
   "variable": [
     {
-      "id": "1aa4dc7e-7975-46ed-86a9-e99ccdc00fbe",
+      "id": "652bf616-407f-4045-bb78-1d743bd84640",
       "key": "last_name",
       "value": ""
     },
     {
-      "id": "e791a7fc-964a-4e97-bb91-d678f3795a5e",
+      "id": "52722fce-4576-48b4-a17e-072dd8452a8b",
       "key": "first_name",
       "value": ""
     },
     {
-      "id": "27856611-8ca7-4f1d-bb62-4835792a9975",
+      "id": "2da2b324-763b-422e-bb3c-e332ddb8cc81",
       "key": "first_name1",
       "value": ""
     },
     {
-      "id": "c8a865f6-70dc-4cbd-90a4-27d94f99738b",
+      "id": "b397bc66-baec-4a11-a602-44e32990431a",
       "key": "last_name1",
       "value": ""
     }
