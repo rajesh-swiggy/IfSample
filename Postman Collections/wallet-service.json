@@ -1,7 +1,8 @@
 {
   "info": {
-    "_postman_id": "403d1cff-454b-44f6-baa4-d8f8bb9cfeca",
+    "_postman_id": "c291db19-0985-4b9a-ba4f-7d86d94621eb",
     "name": "wallet-service",
+    "description": "This is for wallet-service testing",
     "schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
   },
   "item": [
@@ -14,6 +15,7 @@
             {
               "listen": "test",
               "script": {
+                "id": "439b07a4-6ae4-41c0-b542-395860d89fe0",
                 "exec": [
                   "if(pm.collectionVariables.get(\"bootstrapCollection\") === \"true\")",
                   "{",
@@ -24,12 +26,11 @@
                   "    postman.setNextRequest(\"GetTrxnHistory\");",
                   "}"
                 ],
-                "type": "text/javascript",
-                "id": "3b7371e3-b47b-486f-89cd-8a614920f3e9"
+                "type": "text/javascript"
               }
             }
           ],
-          "id": "6b36e8b6-e131-40d5-8348-7487fd51ae30",
+          "_postman_id": "bb261c7e-9740-4442-9730-81c101178020",
           "protocolProfileBehavior": {
             "disableBodyPruning": true
           },
@@ -62,7 +63,7 @@
           "response": []
         }
       ],
-      "id": "4a39afcb-66be-42a9-bf16-03be9f774a94"
+      "_postman_id": "d8543149-215a-442a-88ba-c8c19e085e52"
     },
     {
       "name": "CREATE USERS",
@@ -73,6 +74,7 @@
             {
               "listen": "prerequest",
               "script": {
+                "id": "369fbf99-55e9-4df0-80ef-71be6ab8451f",
                 "exec": [
                   "if(pm.environment.get(\"mobile_number\") === undefined)",
                   "{",
@@ -83,15 +85,14 @@
                   "var new_mobile = parseInt(current_mobile)+1;",
                   "pm.environment.set(\"mobile_number\", new_mobile);"
                 ],
-                "type": "text/javascript",
-                "id": "b38089ec-0da0-4f9c-974e-d81d3ad5098c"
+                "type": "text/javascript"
               }
             },
             {
               "listen": "test",
               "script": {
+                "id": "7e959952-ec98-4555-ace6-318e2646047d",
                 "exec": [
-                  "",
                   "",
                   "let jsonData = pm.response.json();",
                   "if(jsonData.status === \"BAD_REQUEST\" && jsonData.message === \"Mobile number unavailable\")",
@@ -151,12 +152,11 @@
                   "",
                   ""
                 ],
-                "type": "text/javascript",
-                "id": "8c1e3432-df7a-46ba-8b21-06b1d66aadd9"
+                "type": "text/javascript"
               }
             }
           ],
-          "id": "2812e2e7-5de0-4c91-b8b1-46392bb55db5",
+          "_postman_id": "0dc370bf-85de-4014-b952-fabafeb84bf9",
           "protocolProfileBehavior": {
             "disableBodyPruning": true
           },
@@ -212,6 +212,7 @@
             {
               "listen": "test",
               "script": {
+                "id": "9a8dc902-3427-414a-a416-faaa25f85868",
                 "exec": [
                   "pm.test(\"Status code is 200\", function () {",
                   "    pm.response.to.have.status(200);",
@@ -227,12 +228,11 @@
                   "    pm.expect(jsonData.data.authentication_flow).to.be.eql(\"SIGN_UP\");",
                   "});"
                 ],
-                "type": "text/javascript",
-                "id": "0d70cba0-c19f-4e3e-bf7d-37d200924b51"
+                "type": "text/javascript"
               }
             }
           ],
-          "id": "070ea991-5b1b-4a95-8776-f1143f875015",
+          "_postman_id": "ef4f25d5-5363-4a90-a0ad-febadc23ca7b",
           "protocolProfileBehavior": {
             "disableBodyPruning": true
           },
@@ -292,6 +292,7 @@
             {
               "listen": "test",
               "script": {
+                "id": "dae71977-fb3b-4d0d-b6b0-9672de12d532",
                 "exec": [
                   "pm.test(\"Status code is 200\", function () {",
                   "    pm.response.to.have.status(200);",
@@ -308,12 +309,11 @@
                   "pm.collectionVariables.set(\"bootstrapCollection\", false);",
                   ""
                 ],
-                "type": "text/javascript",
-                "id": "1e5c86c5-0478-4d88-8ef2-51cb8151457d"
+                "type": "text/javascript"
               }
             }
           ],
-          "id": "2dccb019-3960-41ce-b3a9-fdefa7030917",
+          "_postman_id": "fd0123c9-67ea-4ac4-914a-47c6d4bcec5c",
           "protocolProfileBehavior": {
             "disableBodyPruning": true
           },
@@ -355,14 +355,17 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"password\": \"Ab!2abcd\",\n  \"otp_request_id\": \"{{auth_request_id}}\",\n  \"tnc_accept\": true\n}"
+              "raw": "{\n  \"password\": \"Ab!2abcd\",\n  \"otp_request_id\": \"{{auth_request_id}}\",\n  \"tnc_accept\": true\n}",
+              "options": {
+                "raw": {}
+              }
             },
             "url": "{{url}}/auth/customer/v1/password/create"
           },
           "response": []
         }
       ],
-      "id": "5c69112d-2a63-4d39-acd1-68cb5f25128d",
+      "_postman_id": "36396c50-db2d-4e67-a70f-73aace515ced",
       "description": "This is the folder description"
     },
     {
@@ -374,6 +377,7 @@
             {
               "listen": "test",
               "script": {
+                "id": "d48fbb35-b11b-4e03-b9a3-6fbc2a1fa652",
                 "exec": [
                   "pm.test(\"Status code is 200\", function () {",
                   "    if(pm.iterationData.get(\"feature\") === \"RECHARGE\" ||  pm.iterationData.get(\"feature\") === \"DOOR_STEP_SERVICES\")",
@@ -405,22 +409,21 @@
                   "}",
                   ""
                 ],
-                "type": "text/javascript",
-                "id": "e4532ece-7cff-4231-9085-5e95c2a60d45"
+                "type": "text/javascript"
               }
             },
             {
               "listen": "prerequest",
               "script": {
+                "id": "c28489a2-0289-4710-9c91-b5dbcc902d41",
                 "exec": [
                   "console.log(\"Testing the transaction history for : \" + pm.iterationData.get(\"feature\"));"
                 ],
-                "type": "text/javascript",
-                "id": "6c0fd9f7-e83c-410f-ad00-3c238fd05d5d"
+                "type": "text/javascript"
               }
             }
           ],
-          "id": "99ebe801-40f1-4566-a11c-69c66d7099bd",
+          "_postman_id": "7de8fd73-9379-45a7-92ef-61d68806e741",
           "protocolProfileBehavior": {
             "disableBodyPruning": true
           },
@@ -487,62 +490,45 @@
           "response": []
         }
       ],
-      "id": "d7639f29-2e48-4561-82e1-7414b82fca62"
-    },
-    {
-      "name": "test",
-      "item": [
-        {
-          "name": "PostmanTestingRajesh",
-          "id": "11ca5932-1177-4474-8ea0-29e877956ff2",
-          "protocolProfileBehavior": {
-            "disableBodyPruning": true
-          },
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": "www.google.com"
-          },
-          "response": []
-        }
-      ],
-      "id": "5daba7be-834a-4fd9-853f-8900c3cb72ee"
+      "_postman_id": "915d5b97-46c5-4df2-aaae-b3018b4e21f8"
     }
   ],
   "event": [
     {
       "listen": "prerequest",
       "script": {
+        "id": "5aade09e-0812-4052-81b0-91de30997a3b",
         "type": "text/javascript",
         "exec": [
           ""
-        ],
-        "id": "7b70eb2e-4744-4a86-af67-c87a5587ef2a"
+        ]
       }
     },
     {
       "listen": "test",
       "script": {
+        "id": "ad51279a-c5ba-4e42-8c54-9a90f92f6789",
         "type": "text/javascript",
         "exec": [
           "pm.variables.unset(\"auth_cve_token\");",
           "pm.variables.unset(\"user_id\");",
           "pm.variables.unset(\"auth_request_id\");"
-        ],
-        "id": "0b365681-d03a-40a1-b08b-080ca24d3422"
+        ]
       }
     }
   ],
   "variable": [
     {
-      "id": "8efaccca-9297-42a7-9ddb-f094bf733895",
+      "id": "4eb13c61-3f14-4df5-bde7-b254556a556c",
       "key": "feature",
-      "value": "REMITTANCE"
+      "value": "REMITTANCE",
+      "type": "string"
     },
     {
-      "id": "8ad661f7-e6b5-462f-8fb9-ad443397c0fb",
+      "id": "31da8a19-064c-4779-8f42-632776c26ff2",
       "key": "bootstrapCollection",
-      "value": "true"
+      "value": "true",
+      "type": "string"
     }
   ]
 }
