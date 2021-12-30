@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "c291db19-0985-4b9a-ba4f-7d86d94621eb",
     "name": "wallet-service",
-    "description": "This is for wallet-service testing 2",
+    "description": "This is for wallet-service testing 5",
     "schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
   },
   "item": [
@@ -30,7 +30,7 @@
               }
             }
           ],
-          "_postman_id": "bb261c7e-9740-4442-9730-81c101178020",
+          "id": "bb261c7e-9740-4442-9730-81c101178020",
           "protocolProfileBehavior": {
             "disableBodyPruning": true
           },
@@ -63,7 +63,7 @@
           "response": []
         }
       ],
-      "_postman_id": "d8543149-215a-442a-88ba-c8c19e085e52"
+      "id": "d8543149-215a-442a-88ba-c8c19e085e52"
     },
     {
       "name": "CREATE USERS",
@@ -156,7 +156,7 @@
               }
             }
           ],
-          "_postman_id": "0dc370bf-85de-4014-b952-fabafeb84bf9",
+          "id": "0dc370bf-85de-4014-b952-fabafeb84bf9",
           "protocolProfileBehavior": {
             "disableBodyPruning": true
           },
@@ -232,7 +232,7 @@
               }
             }
           ],
-          "_postman_id": "ef4f25d5-5363-4a90-a0ad-febadc23ca7b",
+          "id": "ef4f25d5-5363-4a90-a0ad-febadc23ca7b",
           "protocolProfileBehavior": {
             "disableBodyPruning": true
           },
@@ -313,7 +313,7 @@
               }
             }
           ],
-          "_postman_id": "fd0123c9-67ea-4ac4-914a-47c6d4bcec5c",
+          "id": "fd0123c9-67ea-4ac4-914a-47c6d4bcec5c",
           "protocolProfileBehavior": {
             "disableBodyPruning": true
           },
@@ -355,17 +355,14 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"password\": \"Ab!2abcd\",\n  \"otp_request_id\": \"{{auth_request_id}}\",\n  \"tnc_accept\": true\n}",
-              "options": {
-                "raw": {}
-              }
+              "raw": "{\n  \"password\": \"Ab!2abcd\",\n  \"otp_request_id\": \"{{auth_request_id}}\",\n  \"tnc_accept\": true\n}"
             },
             "url": "{{url}}/auth/customer/v1/password/create"
           },
           "response": []
         }
       ],
-      "_postman_id": "36396c50-db2d-4e67-a70f-73aace515ced",
+      "id": "36396c50-db2d-4e67-a70f-73aace515ced",
       "description": "This is the folder description"
     },
     {
@@ -423,7 +420,7 @@
               }
             }
           ],
-          "_postman_id": "7de8fd73-9379-45a7-92ef-61d68806e741",
+          "id": "7de8fd73-9379-45a7-92ef-61d68806e741",
           "protocolProfileBehavior": {
             "disableBodyPruning": true
           },
@@ -490,7 +487,7 @@
           "response": []
         }
       ],
-      "_postman_id": "915d5b97-46c5-4df2-aaae-b3018b4e21f8"
+      "id": "915d5b97-46c5-4df2-aaae-b3018b4e21f8"
     }
   ],
   "event": [
@@ -519,16 +516,14 @@
   ],
   "variable": [
     {
-      "id": "b890d195-ddbd-49b7-b50b-e82f1f1972ce",
+      "id": "7448609f-1084-494f-be5a-864419fd91c1",
       "key": "feature",
-      "value": "REMITTANCE",
-      "type": "string"
+      "value": "REMITTANCE"
     },
     {
-      "id": "0de6bb3b-0fbe-4cd1-9a5d-ce94b92851cf",
+      "id": "8c59014e-85ba-4843-a38b-fb3776087e7f",
       "key": "bootstrapCollection",
-      "value": "true",
-      "type": "string"
+      "value": "true"
     }
   ]
 }
