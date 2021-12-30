@@ -1,0 +1,39 @@
+{
+	"id": "d537f974-61de-4089-8f5b-95900e60e9ee",
+	"values": [
+		{
+			"key": "device_id",
+			"value": "b6e8148eaf223485",
+			"enabled": true
+		},
+		{
+			"key": "platform_id",
+			"value": "ANDROID",
+			"enabled": true
+		},
+		{
+			"key": "device",
+			"value": "HD1911",
+			"enabled": true
+		},
+		{
+			"key": "locale",
+			"value": "EN",
+			"enabled": true
+		},
+		{
+			"key": "version",
+			"value": "1612247052",
+			"enabled": true
+		},
+		{
+			"key": "otp_value",
+			"value": "111111",
+			"enabled": true
+		}
+	],
+	"name": "Globals",
+	"_postman_variable_scope": "globals",
+	"_postman_exported_at": "2021-12-02T18:14:32.624Z",
+	"_postman_exported_using": "Postman/9.1.4"
+}

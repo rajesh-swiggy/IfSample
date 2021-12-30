@@ -1,0 +1,67 @@
+[
+  {
+
+    "feature" : "ONBOARDING"
+  },
+  {
+
+    "feature" : "LOAD_MONEY_PG"
+  },
+  {
+    "feature" : "SPEND_ONLINE"
+  },
+  {
+
+    "feature" : "SPEND_QR"
+  },
+  {
+    "feature" : "RECHARGE"
+  },
+  {
+
+    "feature" : "P2P"
+  },
+  {
+    "feature" : "CAMPAIGN"
+  },
+  {
+
+    "feature" : "WITHDRAW"
+  },
+  {
+    "feature" : "BILL_PAYMENTS"
+  },
+  {
+
+    "feature" : "DEALS"
+  },
+  {
+    "feature" : "LOYALTY"
+  },
+  {
+
+    "feature" : "DOOR_STEP_SERVICES"
+  },
+  {
+    "feature" : "SPEND_ONLINE_CASHBACK"
+  },
+  {
+
+    "feature" : "PAYOUT"
+  },
+  {
+    "feature" : "GIFT_CARD"
+  },
+  {
+    "feature" : "REMITTANCE"
+  },
+  {
+    "feature" : "RECHARGE_BUSINESS_WALLET"
+  },
+  {
+    "feature" : "BNPL"
+  },
+  {
+    "feature" : "ACCOUNT_LINK"
+  }
+]

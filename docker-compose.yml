@@ -1,0 +1,19 @@
+version: "2"
+services:
+  postman_checks:
+      container_name: wallet-service-container
+      build: .
+      image: postman_checks
+      command:
+        run wallet-service.postman_collection.json
+        -e environments/S1-UAE.postman_environment.json
+        -d data/trxn-history.json
+        -g globals/workspace.postman_globals.json
+        -r html,cli
+        --reporter-htmlextra-title "NoonPay API Tests"
+        --reporter-htmlextra-browserTitle "Noon API Automation"
+        --reporter-html-export results/wallet-service-tests.html
+        --reporter-html-template results/templates/customTemplate_1.hbs
+        --reporter-htmlextra-skipFolders 'HEALTH CHECK'
+      volumes:
+        - ./src:/etc/newman
