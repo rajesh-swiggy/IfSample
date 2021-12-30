@@ -1,532 +1,529 @@
 {
-	"info": {
-		"_postman_id": "c291db19-0985-4b9a-ba4f-7d86d94621eb",
-		"name": "wallet-service",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-	},
-	"item": [
-		{
-			"name": "HEALTH CHECK",
-			"item": [
-				{
-					"name": "PostmanEcho",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"if(pm.collectionVariables.get(\"bootstrapCollection\") === \"true\")",
-									"{",
-									"    ",
-									"}",
-									"else",
-									"{",
-									"    postman.setNextRequest(\"GetTrxnHistory\");",
-									"}"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "https://postman-echo.com/get?foo1=bar1&foo2=bar2",
-							"protocol": "https",
-							"host": [
-								"postman-echo",
-								"com"
-							],
-							"path": [
-								"get"
-							],
-							"query": [
-								{
-									"key": "foo1",
-									"value": "bar1"
-								},
-								{
-									"key": "foo2",
-									"value": "bar2"
-								}
-							]
-						},
-						"description": "A simple echo request"
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "CREATE USERS",
-			"item": [
-				{
-					"name": "SignupNewUser",
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									"if(pm.environment.get(\"mobile_number\") === undefined)",
-									"{",
-									"    pm.environment.get(\"country\") === \"UAE\" ? pm.environment.set(\"mobile_number\", \"971555558569\") : pm.environment.set(\"mobile_number\", \"966555558569\");",
-									"}",
-									"",
-									"var current_mobile = pm.environment.get(\"mobile_number\");",
-									"var new_mobile = parseInt(current_mobile)+1;",
-									"pm.environment.set(\"mobile_number\", new_mobile);"
-								],
-								"type": "text/javascript"
-							}
-						},
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"",
-									"",
-									"let jsonData = pm.response.json();",
-									"if(jsonData.status === \"BAD_REQUEST\" && jsonData.message === \"Mobile number unavailable\")",
-									"{",
-									"    let current_mobile = pm.environment.get(\"mobile_number\");",
-									"    let new_mobile = parseInt(current_mobile)+1;",
-									"    pm.environment.set(\"mobile_number\", new_mobile);",
-									"",
-									"    pm.test.skip(\"Status code is not required to be checked for already existing mobile number\", function () {",
-									"            pm.response.to.have.status(200);",
-									"    });",
-									"",
-									"    postman.setNextRequest(\"SignupNewUser\");",
-									"}",
-									"else if (jsonData.status === \"INTERNAL_SERVER_ERROR\" && jsonData.message === \"Unknown error occurred\" && jsonData.error === \"CAS_AUTH11\")",
-									"{",
-									"    pm.test.skip(\"Internal Server Error Occured, skipping the test\", function () {",
-									"            pm.response.to.have.status(200);",
-									"    });",
-									"",
-									"    postman.setNextRequest(\"SignupNewUser\");",
-									"}",
-									"else",
-									"{",
-									"    if(jsonData.data.authentication_flow === \"SIGN_UP\")",
-									"    {",
-									"        pm.test(\"Status code is 200\", function () {",
-									"            pm.response.to.have.status(200);",
-									"        });",
-									"",
-									"        pm.test(\"OTP must be required for a new user\", function() {",
-									"            pm.expect(jsonData.data.otp_required).to.be.eql(true);",
-									"        });",
-									"",
-									"        pm.test(\"Country must be as per the environment selected : \" + pm.environment.get(\"country\"), function() {",
-									"            pm.expect(jsonData.data.country).to.be.eql(pm.environment.get(\"country\"));",
-									"        });",
-									"",
-									"        let otp_request_id = jsonData.data.otp_request_id;",
-									"        let token = jsonData.data.token;",
-									"        let user_id = jsonData.data.user_id;",
-									"",
-									"        pm.environment.set(\"auth_cve_token\", token);",
-									"        pm.environment.set(\"user_id\", user_id);",
-									"        pm.environment.set(\"auth_request_id\", otp_request_id);",
-									"    }",
-									"    else",
-									"    {",
-									"        pm.test.skip(\"Status code is not required to be checked if flow is not SIGN UP\", function () {",
-									"            pm.response.to.have.status(200);",
-									"        });",
-									"        ",
-									"        postman.setNextRequest(\"SignupNewUser\");",
-									"    }",
-									"}",
-									"",
-									"",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "X-NPlatformId",
-								"value": "{{platform_id}}"
-							},
-							{
-								"key": "X-NDevice",
-								"value": "{{device}}"
-							},
-							{
-								"key": "X-NDeviceId",
-								"value": "{{device_id}}"
-							},
-							{
-								"key": "X-Forwarded-For",
-								"value": "10.0.0.0"
-							},
-							{
-								"key": "X-NVersion",
-								"value": "{{version}}"
-							},
-							{
-								"key": "X-NLocale",
-								"value": "{{locale}}"
-							},
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"disabled": true
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"mobile\": \"{{mobile_number}}\",\n    \"fb_token\": null\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{url}}/auth/customer/mobile/v1/signup",
-							"host": [
-								"{{url}}"
-							],
-							"path": [
-								"auth",
-								"customer",
-								"mobile",
-								"v1",
-								"signup"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "VerifyOTP",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"",
-									"let jsonData = pm.response.json();",
-									"",
-									"pm.test(\"Success flag should be true\", function() {",
-									"    pm.expect(jsonData.data.success).to.be.eql(true);",
-									"});",
-									"",
-									"pm.test(\"Authentication flow must be SIGN_UP for new user\", function() {",
-									"    pm.expect(jsonData.data.authentication_flow).to.be.eql(\"SIGN_UP\");",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{auth_cve_token}}"
-							},
-							{
-								"key": "X-NPlatformId",
-								"value": "{{platform_id}}"
-							},
-							{
-								"key": "X-NDevice",
-								"value": "{{device}}"
-							},
-							{
-								"key": "X-NDeviceId",
-								"value": "{{device_id}}"
-							},
-							{
-								"key": "X-Forwarded-For",
-								"value": "10.0.0.0"
-							},
-							{
-								"key": "X-NVersion",
-								"value": "{{version}}"
-							},
-							{
-								"key": "X-NLocale",
-								"value": "{{locale}}"
-							},
-							{
-								"key": "Content-Type",
-								"value": "application/json;charset=utf-8",
-								"disabled": true
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"otp\": \"{{otp_value}}\",\n    \"otp_request_id\": \"{{auth_request_id}}\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{url}}/auth/customer/mobile/otp/v1/verify",
-							"host": [
-								"{{url}}"
-							],
-							"path": [
-								"auth",
-								"customer",
-								"mobile",
-								"otp",
-								"v1",
-								"verify"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "CreatePassword",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"",
-									"let jsonData = pm.response.json();",
-									"",
-									"pm.test(\"Country must be as per the environment selected : \" + pm.environment.get(\"country\"), function() {",
-									"        pm.expect(jsonData.data.country).to.be.eql(pm.environment.get(\"country\"));",
-									"});",
-									"",
-									"pm.environment.set(\"auth_cge_token\", jsonData.data.token);",
-									"pm.environment.set(\"user_id\", jsonData.data.user_id);",
-									"pm.collectionVariables.set(\"bootstrapCollection\", false);",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{auth_cve_token}}"
-							},
-							{
-								"key": "X-NPlatformId",
-								"value": "{{platform_id}}"
-							},
-							{
-								"key": "X-NDevice",
-								"value": "{{device}}"
-							},
-							{
-								"key": "X-NDeviceId",
-								"value": "{{device_id}}"
-							},
-							{
-								"key": "X-Forwarded-For",
-								"value": "10.0.0.0"
-							},
-							{
-								"key": "X-NVersion",
-								"value": "{{version}}"
-							},
-							{
-								"key": "X-NLocale",
-								"value": "{{locale}}"
-							},
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"password\": \"Ab!2abcd\",\n  \"otp_request_id\": \"{{auth_request_id}}\",\n  \"tnc_accept\": true\n}"
-						},
-						"url": {
-							"raw": "{{url}}/auth/customer/v1/password/create",
-							"host": [
-								"{{url}}"
-							],
-							"path": [
-								"auth",
-								"customer",
-								"v1",
-								"password",
-								"create"
-							]
-						}
-					},
-					"response": []
-				}
-			],
-			"description": "This is the folder description"
-		},
-		{
-			"name": "VERIFY TRANSACTION HISTORY",
-			"item": [
-				{
-					"name": "GetTrxnHistory",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    if(pm.iterationData.get(\"feature\") === \"RECHARGE\" ||  pm.iterationData.get(\"feature\") === \"DOOR_STEP_SERVICES\")",
-									"    {",
-									"        pm.response.to.have.status(201);    ",
-									"    }",
-									"    else",
-									"    {",
-									"        pm.response.to.have.status(200);",
-									"    }",
-									"    ",
-									"});",
-									"",
-									"if(pm.iterationData.get(\"feature\") === \"RECHARGE\")",
-									"{",
-									"    pm.test.skip(\"Status is not required to be checked for RECHARGE trxns history\", function () {",
-									"        pm.expect(response.json().status).to.be.eql(\"OK\");",
-									"    });",
-									"",
-									"    pm.test(\"This will always pass to give all results\", function() {",
-									"        pm.expect(true).to.be.eql(true);",
-									"    })",
-									"}",
-									"else",
-									"{",
-									"    pm.test(\"Status is OK\", function () {",
-									"        pm.expect(pm.response.json().status).to.be.eql(\"OK\");",
-									"    });",
-									"}",
-									""
-								],
-								"type": "text/javascript"
-							}
-						},
-						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									"console.log(\"Testing the transaction history for : \" + pm.iterationData.get(\"feature\"));"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "authorization",
-								"value": "{{auth_cge_token}}"
-							},
-							{
-								"key": "x-nlocale",
-								"value": "{{locale}}"
-							},
-							{
-								"key": "x-ndevice",
-								"value": "{{device}}"
-							},
-							{
-								"key": "x-ndeviceid",
-								"value": "{{device_id}}"
-							},
-							{
-								"key": "x-nplatformid",
-								"value": "{{platform_id}}"
-							},
-							{
-								"key": "x-nversion",
-								"value": "{{version}}"
-							}
-						],
-						"url": {
-							"raw": "{{url}}/wallet/customer/v1/history?filters={{feature}}&page=1&limit=20&zoneId=Asia/Kolkata",
-							"host": [
-								"{{url}}"
-							],
-							"path": [
-								"wallet",
-								"customer",
-								"v1",
-								"history"
-							],
-							"query": [
-								{
-									"key": "filters",
-									"value": "{{feature}}"
-								},
-								{
-									"key": "page",
-									"value": "1"
-								},
-								{
-									"key": "limit",
-									"value": "20"
-								},
-								{
-									"key": "zoneId",
-									"value": "Asia/Kolkata"
-								}
-							]
-						},
-						"description": "{{mobile\\_number}}\n\nThis is **Bold Text.**\n\n```\nCode Blocked\n```\n\nThis is *italic text.*\n\nThis is table :\n\n| **Column 1** | **Column 2** |\n| --- | --- |\n| Option 1 | Option 2 |"
-					},
-					"response": []
-				}
-			]
-		}
-	],
-	"event": [
-		{
-			"listen": "prerequest",
-			"script": {
-				"type": "text/javascript",
-				"exec": [
-					""
-				]
-			}
-		},
-		{
-			"listen": "test",
-			"script": {
-				"type": "text/javascript",
-				"exec": [
-					"pm.variables.unset(\"auth_cve_token\");",
-					"pm.variables.unset(\"user_id\");",
-					"pm.variables.unset(\"auth_request_id\");"
-				]
-			}
-		}
-	],
-	"variable": [
-		{
-			"key": "feature",
-			"value": "REMITTANCE"
-		},
-		{
-			"key": "bootstrapCollection",
-			"value": "true"
-		}
-	]
+  "info": {
+    "_postman_id": "c291db19-0985-4b9a-ba4f-7d86d94621eb",
+    "name": "wallet-service",
+    "description": "This is for wallet-service testing 6",
+    "schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "HEALTH CHECK",
+      "item": [
+        {
+          "name": "PostmanEcho",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "id": "439b07a4-6ae4-41c0-b542-395860d89fe0",
+                "exec": [
+                  "if(pm.collectionVariables.get(\"bootstrapCollection\") === \"true\")",
+                  "{",
+                  "    ",
+                  "}",
+                  "else",
+                  "{",
+                  "    postman.setNextRequest(\"GetTrxnHistory\");",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "id": "bb261c7e-9740-4442-9730-81c101178020",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://postman-echo.com/get?foo1=bar1&foo2=bar2",
+              "protocol": "https",
+              "host": [
+                "postman-echo",
+                "com"
+              ],
+              "path": [
+                "get"
+              ],
+              "query": [
+                {
+                  "key": "foo1",
+                  "value": "bar1"
+                },
+                {
+                  "key": "foo2",
+                  "value": "bar2"
+                }
+              ]
+            },
+            "description": "A simple echo request"
+          },
+          "response": []
+        }
+      ],
+      "id": "d8543149-215a-442a-88ba-c8c19e085e52"
+    },
+    {
+      "name": "CREATE USERS",
+      "item": [
+        {
+          "name": "SignupNewUser",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "369fbf99-55e9-4df0-80ef-71be6ab8451f",
+                "exec": [
+                  "if(pm.environment.get(\"mobile_number\") === undefined)",
+                  "{",
+                  "    pm.environment.get(\"country\") === \"UAE\" ? pm.environment.set(\"mobile_number\", \"971555558569\") : pm.environment.set(\"mobile_number\", \"966555558569\");",
+                  "}",
+                  "",
+                  "var current_mobile = pm.environment.get(\"mobile_number\");",
+                  "var new_mobile = parseInt(current_mobile)+1;",
+                  "pm.environment.set(\"mobile_number\", new_mobile);"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "id": "7e959952-ec98-4555-ace6-318e2646047d",
+                "exec": [
+                  "",
+                  "let jsonData = pm.response.json();",
+                  "if(jsonData.status === \"BAD_REQUEST\" && jsonData.message === \"Mobile number unavailable\")",
+                  "{",
+                  "    let current_mobile = pm.environment.get(\"mobile_number\");",
+                  "    let new_mobile = parseInt(current_mobile)+1;",
+                  "    pm.environment.set(\"mobile_number\", new_mobile);",
+                  "",
+                  "    pm.test.skip(\"Status code is not required to be checked for already existing mobile number\", function () {",
+                  "            pm.response.to.have.status(200);",
+                  "    });",
+                  "",
+                  "    postman.setNextRequest(\"SignupNewUser\");",
+                  "}",
+                  "else if (jsonData.status === \"INTERNAL_SERVER_ERROR\" && jsonData.message === \"Unknown error occurred\" && jsonData.error === \"CAS_AUTH11\")",
+                  "{",
+                  "    pm.test.skip(\"Internal Server Error Occured, skipping the test\", function () {",
+                  "            pm.response.to.have.status(200);",
+                  "    });",
+                  "",
+                  "    postman.setNextRequest(\"SignupNewUser\");",
+                  "}",
+                  "else",
+                  "{",
+                  "    if(jsonData.data.authentication_flow === \"SIGN_UP\")",
+                  "    {",
+                  "        pm.test(\"Status code is 200\", function () {",
+                  "            pm.response.to.have.status(200);",
+                  "        });",
+                  "",
+                  "        pm.test(\"OTP must be required for a new user\", function() {",
+                  "            pm.expect(jsonData.data.otp_required).to.be.eql(true);",
+                  "        });",
+                  "",
+                  "        pm.test(\"Country must be as per the environment selected : \" + pm.environment.get(\"country\"), function() {",
+                  "            pm.expect(jsonData.data.country).to.be.eql(pm.environment.get(\"country\"));",
+                  "        });",
+                  "",
+                  "        let otp_request_id = jsonData.data.otp_request_id;",
+                  "        let token = jsonData.data.token;",
+                  "        let user_id = jsonData.data.user_id;",
+                  "",
+                  "        pm.environment.set(\"auth_cve_token\", token);",
+                  "        pm.environment.set(\"user_id\", user_id);",
+                  "        pm.environment.set(\"auth_request_id\", otp_request_id);",
+                  "    }",
+                  "    else",
+                  "    {",
+                  "        pm.test.skip(\"Status code is not required to be checked if flow is not SIGN UP\", function () {",
+                  "            pm.response.to.have.status(200);",
+                  "        });",
+                  "        ",
+                  "        postman.setNextRequest(\"SignupNewUser\");",
+                  "    }",
+                  "}",
+                  "",
+                  "",
+                  ""
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "id": "0dc370bf-85de-4014-b952-fabafeb84bf9",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-NPlatformId",
+                "value": "{{platform_id}}"
+              },
+              {
+                "key": "X-NDevice",
+                "value": "{{device}}"
+              },
+              {
+                "key": "X-NDeviceId",
+                "value": "{{device_id}}"
+              },
+              {
+                "key": "X-Forwarded-For",
+                "value": "10.0.0.0"
+              },
+              {
+                "key": "X-NVersion",
+                "value": "{{version}}"
+              },
+              {
+                "key": "X-NLocale",
+                "value": "{{locale}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"mobile\": \"{{mobile_number}}\",\n    \"fb_token\": null\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{url}}/auth/customer/mobile/v1/signup"
+          },
+          "response": []
+        },
+        {
+          "name": "VerifyOTP",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "id": "9a8dc902-3427-414a-a416-faaa25f85868",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "let jsonData = pm.response.json();",
+                  "",
+                  "pm.test(\"Success flag should be true\", function() {",
+                  "    pm.expect(jsonData.data.success).to.be.eql(true);",
+                  "});",
+                  "",
+                  "pm.test(\"Authentication flow must be SIGN_UP for new user\", function() {",
+                  "    pm.expect(jsonData.data.authentication_flow).to.be.eql(\"SIGN_UP\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "id": "ef4f25d5-5363-4a90-a0ad-febadc23ca7b",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{auth_cve_token}}"
+              },
+              {
+                "key": "X-NPlatformId",
+                "value": "{{platform_id}}"
+              },
+              {
+                "key": "X-NDevice",
+                "value": "{{device}}"
+              },
+              {
+                "key": "X-NDeviceId",
+                "value": "{{device_id}}"
+              },
+              {
+                "key": "X-Forwarded-For",
+                "value": "10.0.0.0"
+              },
+              {
+                "key": "X-NVersion",
+                "value": "{{version}}"
+              },
+              {
+                "key": "X-NLocale",
+                "value": "{{locale}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json;charset=utf-8",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"otp\": \"{{otp_value}}\",\n    \"otp_request_id\": \"{{auth_request_id}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{url}}/auth/customer/mobile/otp/v1/verify"
+          },
+          "response": []
+        },
+        {
+          "name": "CreatePassword",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "id": "dae71977-fb3b-4d0d-b6b0-9672de12d532",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "let jsonData = pm.response.json();",
+                  "",
+                  "pm.test(\"Country must be as per the environment selected : \" + pm.environment.get(\"country\"), function() {",
+                  "        pm.expect(jsonData.data.country).to.be.eql(pm.environment.get(\"country\"));",
+                  "});",
+                  "",
+                  "pm.environment.set(\"auth_cge_token\", jsonData.data.token);",
+                  "pm.environment.set(\"user_id\", jsonData.data.user_id);",
+                  "pm.collectionVariables.set(\"bootstrapCollection\", false);",
+                  ""
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "id": "fd0123c9-67ea-4ac4-914a-47c6d4bcec5c",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{auth_cve_token}}"
+              },
+              {
+                "key": "X-NPlatformId",
+                "value": "{{platform_id}}"
+              },
+              {
+                "key": "X-NDevice",
+                "value": "{{device}}"
+              },
+              {
+                "key": "X-NDeviceId",
+                "value": "{{device_id}}"
+              },
+              {
+                "key": "X-Forwarded-For",
+                "value": "10.0.0.0"
+              },
+              {
+                "key": "X-NVersion",
+                "value": "{{version}}"
+              },
+              {
+                "key": "X-NLocale",
+                "value": "{{locale}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"password\": \"Ab!2abcd\",\n  \"otp_request_id\": \"{{auth_request_id}}\",\n  \"tnc_accept\": true\n}"
+            },
+            "url": "{{url}}/auth/customer/v1/password/create"
+          },
+          "response": []
+        }
+      ],
+      "id": "36396c50-db2d-4e67-a70f-73aace515ced",
+      "description": "This is the folder description"
+    },
+    {
+      "name": "VERIFY TRANSACTION HISTORY",
+      "item": [
+        {
+          "name": "GetTrxnHistory",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "id": "d48fbb35-b11b-4e03-b9a3-6fbc2a1fa652",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    if(pm.iterationData.get(\"feature\") === \"RECHARGE\" ||  pm.iterationData.get(\"feature\") === \"DOOR_STEP_SERVICES\")",
+                  "    {",
+                  "        pm.response.to.have.status(201);    ",
+                  "    }",
+                  "    else",
+                  "    {",
+                  "        pm.response.to.have.status(200);",
+                  "    }",
+                  "    ",
+                  "});",
+                  "",
+                  "if(pm.iterationData.get(\"feature\") === \"RECHARGE\")",
+                  "{",
+                  "    pm.test.skip(\"Status is not required to be checked for RECHARGE trxns history\", function () {",
+                  "        pm.expect(response.json().status).to.be.eql(\"OK\");",
+                  "    });",
+                  "",
+                  "    pm.test(\"This will always pass to give all results\", function() {",
+                  "        pm.expect(true).to.be.eql(true);",
+                  "    })",
+                  "}",
+                  "else",
+                  "{",
+                  "    pm.test(\"Status is OK\", function () {",
+                  "        pm.expect(pm.response.json().status).to.be.eql(\"OK\");",
+                  "    });",
+                  "}",
+                  ""
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "c28489a2-0289-4710-9c91-b5dbcc902d41",
+                "exec": [
+                  "console.log(\"Testing the transaction history for : \" + pm.iterationData.get(\"feature\"));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "id": "7de8fd73-9379-45a7-92ef-61d68806e741",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "authorization",
+                "value": "{{auth_cge_token}}"
+              },
+              {
+                "key": "x-nlocale",
+                "value": "{{locale}}"
+              },
+              {
+                "key": "x-ndevice",
+                "value": "{{device}}"
+              },
+              {
+                "key": "x-ndeviceid",
+                "value": "{{device_id}}"
+              },
+              {
+                "key": "x-nplatformid",
+                "value": "{{platform_id}}"
+              },
+              {
+                "key": "x-nversion",
+                "value": "{{version}}"
+              }
+            ],
+            "url": {
+              "raw": "{{url}}/wallet/customer/v1/history?filters={{feature}}&page=1&limit=20&zoneId=Asia/Kolkata",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "wallet",
+                "customer",
+                "v1",
+                "history"
+              ],
+              "query": [
+                {
+                  "key": "filters",
+                  "value": "{{feature}}"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "20"
+                },
+                {
+                  "key": "zoneId",
+                  "value": "Asia/Kolkata"
+                }
+              ]
+            },
+            "description": "{{mobile\\_number}}\n\nThis is **Bold Text.**\n\n```\nCode Blocked\n```\n\nThis is *italic text.*\n\nThis is table :\n\n| **Column 1** | **Column 2** |\n| --- | --- |\n| Option 1 | Option 2 |"
+          },
+          "response": []
+        }
+      ],
+      "id": "915d5b97-46c5-4df2-aaae-b3018b4e21f8"
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "id": "5aade09e-0812-4052-81b0-91de30997a3b",
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "id": "ad51279a-c5ba-4e42-8c54-9a90f92f6789",
+        "type": "text/javascript",
+        "exec": [
+          "pm.variables.unset(\"auth_cve_token\");",
+          "pm.variables.unset(\"user_id\");",
+          "pm.variables.unset(\"auth_request_id\");"
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "id": "18535498-3227-45bb-bb28-14ade9811ea9",
+      "key": "feature",
+      "value": "REMITTANCE"
+    },
+    {
+      "id": "d43571ba-5074-4384-9f6a-85ee5f0687cf",
+      "key": "bootstrapCollection",
+      "value": "true"
+    }
+  ]
 }
