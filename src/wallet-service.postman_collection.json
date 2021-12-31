@@ -1913,7 +1913,7 @@
       "id": "915d5b97-46c5-4df2-aaae-b3018b4e21f8"
     },
     {
-      "name": "New Folder",
+      "name": "GET USER DETAILS",
       "item": [],
       "id": "20ca69c6-b4e0-4013-bea1-cdf0a6ac4106"
     }
@@ -1944,27 +1944,27 @@
   ],
   "variable": [
     {
-      "id": "472c68af-ffff-4fc5-924d-f292d7757c38",
+      "id": "f0d78535-42c3-4c94-a582-7068669feaf3",
       "key": "feature",
       "value": "REMITTANCE"
     },
     {
-      "id": "187c040b-2dd4-48a6-8233-4ba9d4f66a3b",
+      "id": "59b3312f-191b-45bd-8608-2a0bf4363688",
       "key": "bootstrapCollection",
       "value": "true"
     },
     {
-      "id": "5717f429-1251-4cbb-8080-76bf11923e74",
+      "id": "ffd9ea0f-5d50-4d72-b803-86a0cb58139d",
       "key": "pay_amount",
       "value": ""
     },
     {
-      "id": "bf3510ef-c0c2-43d1-be99-8b34de4b65d9",
+      "id": "35fd5b78-8e5d-40d6-94f3-4db75eb8854a",
       "key": "checksum",
       "value": ""
     },
     {
-      "id": "7c5d14ce-4e0d-4f41-8943-12d006ef0ea8",
+      "id": "5b154f22-090a-40be-a9dc-1cd75dc2099f",
       "key": "timestamp",
       "value": ""
     }
