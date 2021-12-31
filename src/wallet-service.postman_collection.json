@@ -366,130 +366,6 @@
       "description": "This is the folder description"
     },
     {
-      "name": "VERIFY TRANSACTION HISTORY",
-      "item": [
-        {
-          "name": "GetTrxnHistory",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "id": "d48fbb35-b11b-4e03-b9a3-6fbc2a1fa652",
-                "exec": [
-                  "pm.test(\"Status code is 200\", function () {",
-                  "    if(pm.iterationData.get(\"feature\") === \"RECHARGE\" ||  pm.iterationData.get(\"feature\") === \"DOOR_STEP_SERVICES\")",
-                  "    {",
-                  "        pm.response.to.have.status(201);    ",
-                  "    }",
-                  "    else",
-                  "    {",
-                  "        pm.response.to.have.status(200);",
-                  "    }",
-                  "    ",
-                  "});",
-                  "",
-                  "if(pm.iterationData.get(\"feature\") === \"RECHARGE\")",
-                  "{",
-                  "    pm.test.skip(\"Status is not required to be checked for RECHARGE trxns history\", function () {",
-                  "        pm.expect(response.json().status).to.be.eql(\"OK\");",
-                  "    });",
-                  "",
-                  "    pm.test(\"This will always pass to give all results\", function() {",
-                  "        pm.expect(true).to.be.eql(true);",
-                  "    })",
-                  "}",
-                  "else",
-                  "{",
-                  "    pm.test(\"Status is OK\", function () {",
-                  "        pm.expect(pm.response.json().status).to.be.eql(\"OK\");",
-                  "    });",
-                  "}",
-                  ""
-                ],
-                "type": "text/javascript"
-              }
-            },
-            {
-              "listen": "prerequest",
-              "script": {
-                "id": "c28489a2-0289-4710-9c91-b5dbcc902d41",
-                "exec": [
-                  "console.log(\"Testing the transaction history for : \" + pm.iterationData.get(\"feature\"));"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
-          "id": "7de8fd73-9379-45a7-92ef-61d68806e741",
-          "protocolProfileBehavior": {
-            "disableBodyPruning": true
-          },
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "authorization",
-                "value": "{{auth_cge_token}}"
-              },
-              {
-                "key": "x-nlocale",
-                "value": "{{locale}}"
-              },
-              {
-                "key": "x-ndevice",
-                "value": "{{device}}"
-              },
-              {
-                "key": "x-ndeviceid",
-                "value": "{{device_id}}"
-              },
-              {
-                "key": "x-nplatformid",
-                "value": "{{platform_id}}"
-              },
-              {
-                "key": "x-nversion",
-                "value": "{{version}}"
-              }
-            ],
-            "url": {
-              "raw": "{{url}}/wallet/customer/v1/history?filters={{feature}}&page=1&limit=20&zoneId=Asia/Kolkata",
-              "host": [
-                "{{url}}"
-              ],
-              "path": [
-                "wallet",
-                "customer",
-                "v1",
-                "history"
-              ],
-              "query": [
-                {
-                  "key": "filters",
-                  "value": "{{feature}}"
-                },
-                {
-                  "key": "page",
-                  "value": "1"
-                },
-                {
-                  "key": "limit",
-                  "value": "20"
-                },
-                {
-                  "key": "zoneId",
-                  "value": "Asia/Kolkata"
-                }
-              ]
-            },
-            "description": "{{mobile\\_number}}\n\nThis is **Bold Text.**\n\n```\nCode Blocked\n```\n\nThis is *italic text.*\n\nThis is table :\n\n| **Column 1** | **Column 2** |\n| --- | --- |\n| Option 1 | Option 2 |"
-          },
-          "response": []
-        }
-      ],
-      "id": "915d5b97-46c5-4df2-aaae-b3018b4e21f8"
-    },
-    {
       "name": "TrustedMerchantPosFlow",
       "item": [
         {
@@ -1911,6 +1787,130 @@
         }
       ],
       "id": "a31eb0ae-0aa6-40cd-9a16-4d0048803184"
+    },
+    {
+      "name": "VERIFY TRANSACTION HISTORY",
+      "item": [
+        {
+          "name": "GetTrxnHistory",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "id": "d48fbb35-b11b-4e03-b9a3-6fbc2a1fa652",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    if(pm.iterationData.get(\"feature\") === \"RECHARGE\" ||  pm.iterationData.get(\"feature\") === \"DOOR_STEP_SERVICES\")",
+                  "    {",
+                  "        pm.response.to.have.status(201);    ",
+                  "    }",
+                  "    else",
+                  "    {",
+                  "        pm.response.to.have.status(200);",
+                  "    }",
+                  "    ",
+                  "});",
+                  "",
+                  "if(pm.iterationData.get(\"feature\") === \"RECHARGE\")",
+                  "{",
+                  "    pm.test.skip(\"Status is not required to be checked for RECHARGE trxns history\", function () {",
+                  "        pm.expect(response.json().status).to.be.eql(\"OK\");",
+                  "    });",
+                  "",
+                  "    pm.test(\"This will always pass to give all results\", function() {",
+                  "        pm.expect(true).to.be.eql(true);",
+                  "    })",
+                  "}",
+                  "else",
+                  "{",
+                  "    pm.test(\"Status is OK\", function () {",
+                  "        pm.expect(pm.response.json().status).to.be.eql(\"OK\");",
+                  "    });",
+                  "}",
+                  ""
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "c28489a2-0289-4710-9c91-b5dbcc902d41",
+                "exec": [
+                  "console.log(\"Testing the transaction history for : \" + pm.iterationData.get(\"feature\"));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "id": "7de8fd73-9379-45a7-92ef-61d68806e741",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "authorization",
+                "value": "{{auth_cge_token}}"
+              },
+              {
+                "key": "x-nlocale",
+                "value": "{{locale}}"
+              },
+              {
+                "key": "x-ndevice",
+                "value": "{{device}}"
+              },
+              {
+                "key": "x-ndeviceid",
+                "value": "{{device_id}}"
+              },
+              {
+                "key": "x-nplatformid",
+                "value": "{{platform_id}}"
+              },
+              {
+                "key": "x-nversion",
+                "value": "{{version}}"
+              }
+            ],
+            "url": {
+              "raw": "{{url}}/wallet/customer/v1/history?filters={{feature}}&page=1&limit=20&zoneId=Asia/Kolkata",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "wallet",
+                "customer",
+                "v1",
+                "history"
+              ],
+              "query": [
+                {
+                  "key": "filters",
+                  "value": "{{feature}}"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "20"
+                },
+                {
+                  "key": "zoneId",
+                  "value": "Asia/Kolkata"
+                }
+              ]
+            },
+            "description": "{{mobile\\_number}}\n\nThis is **Bold Text.**\n\n```\nCode Blocked\n```\n\nThis is *italic text.*\n\nThis is table :\n\n| **Column 1** | **Column 2** |\n| --- | --- |\n| Option 1 | Option 2 |"
+          },
+          "response": []
+        }
+      ],
+      "id": "915d5b97-46c5-4df2-aaae-b3018b4e21f8"
     }
   ],
   "event": [
@@ -1939,12 +1939,12 @@
   ],
   "variable": [
     {
-      "id": "b8b6af78-e3ee-4682-a285-31da5b8e8c43",
+      "id": "3c855956-4ad3-4d8b-aad8-3336c054c794",
       "key": "feature",
       "value": "REMITTANCE"
     },
     {
-      "id": "14a69cd9-98b3-4ea5-bab7-97cb7786fa3b",
+      "id": "0159a0a8-bb2b-4d2a-8660-6780b449f46a",
       "key": "bootstrapCollection",
       "value": "true"
     }
