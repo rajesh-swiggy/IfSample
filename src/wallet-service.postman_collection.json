@@ -488,6 +488,1429 @@
         }
       ],
       "id": "915d5b97-46c5-4df2-aaae-b3018b4e21f8"
+    },
+    {
+      "name": "TrustedMerchantPosFlow",
+      "item": [
+        {
+          "name": "flow1-Wallet",
+          "item": [
+            {
+              "name": "customerDetailsSuccess",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "console.log(\"Entering : \" + pm.info.requestName);",
+                      "",
+                      "// Prepare prescript data",
+                      "var timestamp = _.now();",
+                      "// pm.environment.set(\"auto_pay_amount\", _.random (20,100));",
+                      "pm.environment.set(\"auto_pay_amount\", 17);",
+                      "",
+                      "var reqBody = pm.request.body.toString();",
+                      "reqBody = reqBody.replace(\"{{user_podC_customerId}}\", pm.environment.get(\"user_podC_customerId\"));",
+                      "reqBody = reqBody.replace(\"{{auto_pay_amount}}\", pm.environment.get(\"auto_pay_amount\"));",
+                      "reqBody = reqBody.replace(/\\s/g,'');",
+                      "",
+                      "var input = timestamp+\"|\"+reqBody;",
+                      "",
+                      "// Calculate checksum",
+                      "var hash = CryptoJS.HmacSHA256(input, pm.environment.get(\"auto_checksum_key\"));",
+                      "var checksum = CryptoJS.enc.Base64.stringify(hash);",
+                      "console.log(checksum);",
+                      "// Set Environment Variables",
+                      "pm.environment.set('checksum', checksum);",
+                      "pm.environment.set('timestamp', timestamp);"
+                    ],
+                    "type": "text/javascript",
+                    "id": "054cf27c-fdcd-4616-8774-848b8cc4e170"
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "var jsonData = pm.response.json();",
+                      "pm.test(\"Status is OK\", function () {",
+                      "    pm.expect(jsonData.status).to.eql('OK');",
+                      "});",
+                      "",
+                      "// Verify that campaign id is not null",
+                      "pm.test(\"Status is OK\", function () {",
+                      "    pm.expect(jsonData.status).to.eql('OK');",
+                      "});",
+                      "",
+                      "pm.test(\"The response contains a valid Campaign ID in the response\", function () {",
+                      "    pm.expect(_isContains(jsonData.data.campaigns, \"campaign_id\" , pm.environment.get(\"auto_campaign_id\"))).to.be.true;",
+                      "});",
+                      "",
+                      "function _isContains(json, keyname, value) {",
+                      " return Object.keys(json).some(key => {",
+                      "        return typeof json[key] === 'object' ? ",
+                      "        _isContains(json[key], keyname, value) : key === keyname && json[key] === value;",
+                      "    });",
+                      "}",
+                      "",
+                      "var cashbackBalance = jsonData.data.user_details.cashback_balance;",
+                      "",
+                      "pm.environment.set(\"auto_cashback_balance\", cashbackBalance);"
+                    ],
+                    "type": "text/javascript",
+                    "id": "0574ecb0-694f-4fd9-a024-cb0c415121c8"
+                  }
+                }
+              ],
+              "id": "eb563d6e-e48c-4df6-9db2-179c0bdad4a5",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-NMerchantId",
+                    "value": "{{auto_merchant_id}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "X-NChecksum",
+                    "value": "{{checksum}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "X-NTimestamp",
+                    "value": "{{timestamp}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"customer_id\": \"5a93cdb8-9009-4cf2-96a2-22aa12f704c5\",\n    \"amount\" : \"{{auto_pay_amount}}\",\n    \"return_campaign\" : \"true\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "{{url}}/mgw/trusted/customer/v1/details",
+                "description": "apiCustomerDetailsSuccess"
+              },
+              "response": []
+            },
+            {
+              "name": "campaignValidateSuccess",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "console.log(\"Entering : \" + pm.info.requestName);",
+                      "",
+                      "// Prepare prescript data",
+                      "var timestamp = _.now();",
+                      "",
+                      "var reqBody = pm.request.body.toString();",
+                      "reqBody = reqBody.replace(\"{{user_podC_customerId}}\", pm.environment.get(\"user_podC_customerId\"));",
+                      "reqBody = reqBody.replace(\"{{auto_pay_amount}}\", pm.environment.get(\"auto_pay_amount\"));",
+                      "reqBody = reqBody.replace(\"{{auto_campaign_id}}\", pm.environment.get(\"auto_campaign_id\"));",
+                      "reqBody = reqBody.replace(/\\s/g,'');",
+                      "",
+                      "var input = timestamp+\"|\"+reqBody;",
+                      " ",
+                      "// Calculate checksum",
+                      "var hash = CryptoJS.HmacSHA256(input, pm.environment.get(\"auto_checksum_key\"));",
+                      "var checksum = CryptoJS.enc.Base64.stringify(hash);",
+                      "",
+                      "// Set Environment Variables",
+                      "pm.environment.set('checksum', checksum);",
+                      "pm.environment.set('timestamp', timestamp);"
+                    ],
+                    "type": "text/javascript",
+                    "id": "9e7380b9-f6ac-412e-ab58-0e0a6533241d"
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "var jsonData = pm.response.json();",
+                      "var campaignTxnId = jsonData.data.campaign_txn_id;",
+                      "var successText = jsonData.data.text;",
+                      "",
+                      "pm.test(\"Status is OK\", function () {",
+                      "    pm.expect(jsonData.status).to.eql('OK');",
+                      "});",
+                      "",
+                      "pm.test(\"Campaign TxnId is not null\", function () {",
+                      "    pm.expect(campaignTxnId).not.to.be.null;",
+                      "});",
+                      "",
+                      "pm.test(\"Verify the success text\", function () {",
+                      "    pm.expect(successText).to.be.eql('Congratulations!! You will get cashback of AED 10.00 on this transaction.');",
+                      "});",
+                      "",
+                      "var expCashbackAmount = successText.substring(",
+                      "    successText.lastIndexOf(\"AED \") + 4, ",
+                      "    successText.lastIndexOf(\" on this transaction.\")",
+                      ");",
+                      "",
+                      "pm.environment.set(\"auto_campaign_txn_id\", campaignTxnId);",
+                      "pm.environment.set(\"auto_exp_cashback_amount\", expCashbackAmount);"
+                    ],
+                    "type": "text/javascript",
+                    "id": "da5d76cc-f24d-40fd-8ea8-1e6565a34f67"
+                  }
+                }
+              ],
+              "id": "6f2f9d94-7a79-43b7-8add-27bce408293b",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-NMerchantId",
+                    "value": "{{auto_merchant_id}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "X-NChecksum",
+                    "value": "{{checksum}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "X-NTimestamp",
+                    "value": "{{timestamp}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"customer_id\": \"{{user_podC_customerId}}\",\n    \"amount\": \"{{auto_pay_amount}}\",\n    \"campaign_id\": \"{{auto_campaign_id}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "{{url}}/mgw/trusted/campaign/v1/validate"
+              },
+              "response": []
+            },
+            {
+              "name": "debitWalletSuccess",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "console.log(\"Entering : \" + pm.info.requestName);",
+                      "",
+                      "// Prepare prescript data",
+                      "var timestamp = _.now();",
+                      "var reqBody = pm.request.body.toString();",
+                      "pm.environment.set(\"auto_merchant_txn_id\", \"MTXN\" + timestamp);",
+                      "",
+                      "reqBody = reqBody.replace(\"{{user_podC_customerId}}\", pm.environment.get(\"user_podC_customerId\"));",
+                      "reqBody = reqBody.replace(\"{{auto_cashback_balance}}\", pm.environment.get(\"auto_cashback_balance\"));",
+                      "reqBody = reqBody.replace(\"{{auto_pay_amount}}\", pm.environment.get(\"auto_pay_amount\"));",
+                      "reqBody = reqBody.replace(\"{{auto_merchant_txn_id}}\", pm.environment.get(\"auto_merchant_txn_id\"));",
+                      "reqBody = reqBody.replace(\"{{auto_campaign_txn_id}}\", pm.environment.get(\"auto_campaign_txn_id\"));",
+                      "reqBody = reqBody.replace(/\\s/g,'');",
+                      "",
+                      "var input = timestamp+\"|\"+reqBody;",
+                      "",
+                      "// Calculate checksum",
+                      "var hash = CryptoJS.HmacSHA256(input, pm.environment.get(\"auto_checksum_key\"));",
+                      "var checksum = CryptoJS.enc.Base64.stringify(hash);",
+                      "",
+                      "// Set Environment Variables",
+                      "pm.environment.set('checksum', checksum);",
+                      "pm.environment.set('timestamp', timestamp);",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "id": "7e9827e6-b8f6-4d3d-be75-4a0c14c5d308"
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "var jsonData = pm.response.json();",
+                      "pm.test(\"Status is OK\", function () {",
+                      "    pm.expect(jsonData.status).to.eql('OK');",
+                      "});",
+                      "",
+                      "pm.test(\"Verify Transaction Status should be SUCCESS\", function () {",
+                      "    pm.expect(jsonData.data.status).to.eql(\"SUCCESS\");",
+                      "});",
+                      "",
+                      "var merTxnId = jsonData.data.merchant_txn_id;",
+                      "var actualCashbackAmount = jsonData.data.cash_back_amount;",
+                      "var expCashbackAmount = Number(pm.environment.get(\"auto_exp_cashback_amount\"));",
+                      "",
+                      "pm.test(\"Verify that merchant_txn_id is not null\", function () {",
+                      "    pm.expect(merTxnId).not.to.be.null;",
+                      "});",
+                      "",
+                      "pm.test(\"Verify that cashback amount is same as it was in campaign validate response : \" + expCashbackAmount, function () {",
+                      "    pm.expect(actualCashbackAmount).to.be.eql(expCashbackAmount);",
+                      "});",
+                      "",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "id": "91ca66c4-96f7-4427-8a29-7ffe1e8ac72d"
+                  }
+                }
+              ],
+              "id": "5a3d0978-dff9-4701-bdec-62291c1e31a8",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-NMerchantId",
+                    "value": "{{auto_merchant_id}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "X-NChecksum",
+                    "value": "{{checksum}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "X-NTimestamp",
+                    "value": "{{timestamp}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"customer_id\": \"{{user_podC_customerId}}\",\n    \"current_wallet_balance\": \"{{auto_cashback_balance}}\",\n    \"amount\": \"{{auto_pay_amount}}\",\n    \"merchant_txn_id\": \"{{auto_merchant_txn_id}}\",\n    \"campaign_txn_id\" : \"{{auto_campaign_txn_id}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "{{url}}/mgw/trusted/checkout/transaction/v1/debit"
+              },
+              "response": []
+            },
+            {
+              "name": "debitWalletTxnStatusSuccess",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "console.log(\"Entering : \" + pm.info.requestName);",
+                      "",
+                      "// Prepare prescript data",
+                      "var timestamp = _.now();",
+                      "var reqBody = pm.request.body.toString();",
+                      "",
+                      "reqBody = reqBody.replace(\"{{auto_merchant_txn_id}}\", pm.environment.get(\"auto_merchant_txn_id\"));",
+                      "reqBody = reqBody.replace(/\\s/g,'');",
+                      "",
+                      "var input = timestamp+\"|\"+reqBody;",
+                      " ",
+                      "// Calculate checksum",
+                      "var hash = CryptoJS.HmacSHA256(input, pm.environment.get(\"auto_checksum_key\"));",
+                      "var checksum = CryptoJS.enc.Base64.stringify(hash);",
+                      "",
+                      "// Set Environment Variables",
+                      "pm.environment.set('checksum', checksum);",
+                      "pm.environment.set('timestamp', timestamp);",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "id": "e25d5090-6f34-4415-afc9-c5e35755f51d"
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "var jsonData = pm.response.json();",
+                      "pm.test(\"Status is OK\", function () {",
+                      "    pm.expect(jsonData.status).to.eql('OK');",
+                      "});",
+                      "",
+                      "var actualAmount = jsonData.data.amount;",
+                      "var expAmount = Number(pm.environment.get(\"auto_pay_amount\"));",
+                      "var actualMerTrxnId = jsonData.data.merchant_txn_id;",
+                      "var expMerTrxnId = pm.environment.get(\"auto_merchant_txn_id\");",
+                      "",
+                      "pm.test(\"Verify that the amount is correct as the debit trxn.\", function () {",
+                      "    pm.expect(actualAmount).to.eql(expAmount);",
+                      "});",
+                      "",
+                      "pm.test(\"Verify that the merchant_txn_id is correct as the debit trxn.\", function () {",
+                      "    pm.expect(actualMerTrxnId).to.eql(expMerTrxnId);",
+                      "});",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "id": "80f69f40-8937-4570-8391-6c7734815bac"
+                  }
+                }
+              ],
+              "id": "beb2dc27-b6af-49df-a91c-1738553f8361",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-NMerchantId",
+                    "value": "{{auto_merchant_id}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "X-NChecksum",
+                    "value": "{{checksum}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "X-NTimestamp",
+                    "value": "{{timestamp}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"merchant_txn_id\": \"{{auto_merchant_txn_id}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "{{url}}/mgw/trusted/checkout/transaction/v2/status"
+              },
+              "response": []
+            },
+            {
+              "name": "customerDetailsAfterDebitWalletSuccess",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "console.log(\"Entering : \" + pm.info.requestName);",
+                      "",
+                      "// Prepare prescript data",
+                      "var timestamp = _.now();",
+                      "var reqBody = pm.request.body.toString();",
+                      "",
+                      "reqBody = reqBody.replace(\"{{user_podC_customerId}}\", pm.environment.get(\"user_podC_customerId\"));",
+                      "reqBody = reqBody.replace(/\\s/g,'');",
+                      "",
+                      "var input = timestamp+\"|\"+reqBody;",
+                      "",
+                      "// Calculate checksum",
+                      "var hash = CryptoJS.HmacSHA256(input, pm.environment.get(\"auto_checksum_key\"));",
+                      "var checksum = CryptoJS.enc.Base64.stringify(hash);",
+                      "",
+                      "// Set Environment Variables",
+                      "pm.environment.set('checksum', checksum);",
+                      "pm.environment.set('timestamp', timestamp);"
+                    ],
+                    "type": "text/javascript",
+                    "id": "c439d733-c1d5-4afb-8daa-b9e165e15289"
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "var jsonData = pm.response.json();",
+                      "pm.test(\"Status is OK\", function () {",
+                      "    pm.expect(jsonData.status).to.eql('OK');",
+                      "});",
+                      "",
+                      "",
+                      "// verify cashback balance is decreased by the debit transaction amount",
+                      "var cashbackBalanceAfterTrxn = jsonData.data.user_details.cashback_balance;",
+                      "var expectedCashbackBalance =     Number(pm.environment.get(\"auto_cashback_balance\")) ",
+                      "                                - Number(pm.environment.get(\"auto_pay_amount\")) ",
+                      "                                + Number(pm.environment.get(\"auto_exp_cashback_amount\"));",
+                      "",
+                      "pm.test(\"Verify that the cashback amount is correct after the debit trxn.\", function () {",
+                      "    pm.expect(cashbackBalanceAfterTrxn).to.eql(expectedCashbackBalance);",
+                      "});",
+                      "",
+                      "// Unset the environment variables",
+                      "console.log(\"Clearing the environment variables.\");",
+                      "pm.environment.unset(\"auto_cashback_balance\");",
+                      "pm.environment.unset(\"auto_campaign_txn_id\");",
+                      "pm.environment.unset(\"auto_exp_cashback_amount\");",
+                      "pm.environment.unset(\"auto_pay_amount\");",
+                      "pm.environment.unset(\"auto_merchant_txn_id\");",
+                      "pm.environment.unset(\"timestamp\");",
+                      "pm.environment.unset(\"checksum\");"
+                    ],
+                    "type": "text/javascript",
+                    "id": "ccbc441d-a2e8-4170-a82a-3200969ec016"
+                  }
+                }
+              ],
+              "id": "c7615154-5b7d-47e0-8131-919d3ac06f49",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-NMerchantId",
+                    "value": "{{auto_merchant_id}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "X-NChecksum",
+                    "value": "{{checksum}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "X-NTimestamp",
+                    "value": "{{timestamp}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"customer_id\": \"{{user_podC_customerId}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "{{url}}/mgw/trusted/customer/v1/details",
+                "description": "apiCustomerDetailsSuccess"
+              },
+              "response": []
+            }
+          ],
+          "id": "cace4ed1-2f30-41d8-ba0e-234d22064631",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  ""
+                ],
+                "id": "1695c240-c998-465c-9a8b-1e784acdaa4e"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  ""
+                ],
+                "id": "0c3f48a5-a8c0-408f-8d43-26b188fc4138"
+              }
+            }
+          ]
+        },
+        {
+          "name": "flow2-SavedCard",
+          "item": [
+            {
+              "name": "custDtlsBeforeDebitSavedCardSuccess",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "console.log(\"Entering : \" + pm.info.requestName);",
+                      "",
+                      "// Prepare prescript data",
+                      "var timestamp = _.now();",
+                      "var user = pm.environment.get(\"user_podC_customerId\");",
+                      "var reqBody = pm.request.body.toString();",
+                      "reqBody = reqBody.replace(\"{{user_podC_customerId}}\", user);",
+                      "reqBody = reqBody.replace(/\\s/g,'');",
+                      "",
+                      "var input = timestamp+\"|\"+reqBody;",
+                      "",
+                      "// Calculate checksum",
+                      "var hash = CryptoJS.HmacSHA256(input, pm.environment.get(\"auto_checksum_key\"));",
+                      "var checksum = CryptoJS.enc.Base64.stringify(hash);",
+                      "",
+                      "// Set Environment Variables",
+                      "pm.environment.set('checksum', checksum);",
+                      "pm.environment.set('timestamp', timestamp);"
+                    ],
+                    "type": "text/javascript",
+                    "id": "978da80b-3114-4c78-957e-e1d9098e1195"
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "// Verify that status is ok",
+                      "// Verify cashback balance is not null",
+                      "// save cashback balance",
+                      "",
+                      "",
+                      "var jsonData = pm.response.json();",
+                      "var cashbackBalance = jsonData.data.user_details.cashback_balance;",
+                      "var campaignId = jsonData.data.campaigns[0].campaign_id;",
+                      "",
+                      "pm.environment.set(\"auto_cashback_balance\", cashbackBalance);",
+                      "pm.environment.set(\"auto_campaign_id\", campaignId);"
+                    ],
+                    "type": "text/javascript",
+                    "id": "caf248c1-8ccb-456a-a8f7-68fad00f8b75"
+                  }
+                }
+              ],
+              "id": "a98fabc7-c1de-43cc-b48d-0d9558ba205d",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-NMerchantId",
+                    "value": "{{auto_merchant_id}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "X-NChecksum",
+                    "value": "{{checksum}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "X-NTimestamp",
+                    "value": "{{timestamp}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"customer_id\": \"{{user_podC_customerId}}\",\n    \"amount\" : \"10.00\",\n    \"return_campaign\" : \"true\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "{{url}}/mgw/trusted/customer/v1/details",
+                "description": "apiCustomerDetailsSuccess"
+              },
+              "response": []
+            },
+            {
+              "name": "debitSavedCardSuccess",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "console.log(\"Entering : \" + pm.info.requestName);",
+                      "",
+                      "var reqBody = JSON.parse(request.data);",
+                      "var timestamp = _.now()",
+                      "",
+                      "var merchant_txn_id = \"TXN\" + timestamp;",
+                      "",
+                      "pm.environment.set(\"auto_merchant_txn_id\", merchant_txn_id);",
+                      "var user = pm.environment.get(\"user_podC_customerId\");",
+                      "",
+                      "var newReqBody = pm.request.body.toString();",
+                      "newReqBody = newReqBody.replace(\"{{user_podC_customerId}}\", user);",
+                      "newReqBody = newReqBody.replace(\"{{auto_merchant_txn_id}}\", merchant_txn_id);",
+                      "newReqBody = newReqBody.replace(/\\s/g,'');",
+                      "",
+                      "var input = timestamp+\"|\"+newReqBody;",
+                      "",
+                      "var hash = CryptoJS.HmacSHA256(input, pm.environment.get(\"auto_checksum_key\"));",
+                      "var checksum = CryptoJS.enc.Base64.stringify(hash);",
+                      "pm.environment.set('checksum', checksum);",
+                      "pm.environment.set('timestamp', timestamp);"
+                    ],
+                    "type": "text/javascript",
+                    "id": "79efd213-f4e4-4b62-8c1d-7b12003333d7"
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "var jsonData = pm.response.json();",
+                      "pm.test(\"Verify Transaction Status should be IN_PROGRESS\", function () {",
+                      "    pm.expect(jsonData.data.status).to.eql(\"IN_PROGRESS\");",
+                      "});",
+                      "",
+                      "// Verify that merchant trxn id is not null",
+                      "// Verify that cash_back_amount is same as provided in the campaignValidateSuccess test",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "id": "7b9307b4-e899-43f3-ada1-8b7d5d278608"
+                  }
+                }
+              ],
+              "id": "d6539b43-7c33-4384-8156-1d7203c53e72",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-NMerchantId",
+                    "value": "{{auto_merchant_id}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "X-NChecksum",
+                    "value": "{{checksum}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "X-NTimestamp",
+                    "value": "{{timestamp}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"customer_id\": \"{{user_podC_customerId}}\",\n    \"amount\": \"10\",\n    \"merchant_txn_id\": \"{{auto_merchant_txn_id}}\",\n    \"redirect_url\": \"https://www.nostg.com/uae-en/payment?order=NAEC600604728\",\n    \"card\": {\n        \"saved_card\": {\n            \"card_identifier\": \"15a18c4b-0ff4-4403-bbca-6362d8a6175f\",\n            \"cvv\": \"123\"\n        },\n        \"use_wallet_balance\": false\n    }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "{{url}}/mgw/trusted/checkout/transaction/v1/debit"
+              },
+              "response": []
+            },
+            {
+              "name": "debitSavedCardTxnStatusSuccess",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "console.log(\"Entering : \" + pm.info.requestName);",
+                      "",
+                      "var reqBody = JSON.parse(request.data);",
+                      "var date = new Date();",
+                      "var timestamp = date.getTime();",
+                      "",
+                      "var input = timestamp+\"|{\\\"merchant_txn_id\\\":\\\"\"+pm.environment.get(\"auto_merchant_txn_id\")+\"\\\"}\";",
+                      " ",
+                      "var hash = CryptoJS.HmacSHA256(input, pm.environment.get(\"auto_checksum_key\"));",
+                      "var checksum = CryptoJS.enc.Base64.stringify(hash);",
+                      "pm.environment.set('checksum', checksum);",
+                      "pm.environment.set('timestamp', timestamp);"
+                    ],
+                    "type": "text/javascript",
+                    "id": "135b5afb-7c40-445c-8e28-bb990e15d4ed"
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "// Verify that status is OK",
+                      "// Verify that amount is correct as per debitWalletSuccess test",
+                      "// verify that merchant_txn_id is same as generated in debitWalletSuccess test"
+                    ],
+                    "type": "text/javascript",
+                    "id": "f24de753-bdec-4b06-b7b0-94ddcde2e3ff"
+                  }
+                }
+              ],
+              "id": "6de58bd8-a302-4e2f-9223-d56495da86ae",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-NMerchantId",
+                    "value": "{{auto_merchant_id}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "X-NChecksum",
+                    "value": "{{checksum}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "X-NTimestamp",
+                    "value": "{{timestamp}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"merchant_txn_id\": \"{{auto_merchant_txn_id}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "{{url}}/mgw/trusted/checkout/transaction/v2/status"
+              },
+              "response": []
+            },
+            {
+              "name": "custDtlsAfterDebitSavedCardSuccess",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "console.log(\"Entering : \" + pm.info.requestName);",
+                      "",
+                      "var reqBody = JSON.parse(request.data);",
+                      "var date = new Date();",
+                      "var timestamp = date.getTime();",
+                      "",
+                      "var input = timestamp+\"|{\\\"customer_id\\\":\\\"\"+pm.environment.get(\"user_podC_customerId\")+\"\\\",\\\"amount\\\":\\\"\"+reqBody.amount+\"\\\",\\\"return_campaign\\\":\\\"\"+reqBody.return_campaign+\"\\\"}\";",
+                      " ",
+                      "var hash = CryptoJS.HmacSHA256(input, pm.environment.get(\"auto_checksum_key\"));",
+                      "var checksum = CryptoJS.enc.Base64.stringify(hash);",
+                      "pm.environment.set('checksum', checksum);",
+                      "pm.environment.set('timestamp', timestamp);"
+                    ],
+                    "type": "text/javascript",
+                    "id": "955a2efe-2c2f-4d3c-9053-edacfae887cd"
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "// Verify that status is ok",
+                      "// verify cashback balance is decreased by the debit transaction amount",
+                      "",
+                      "var jsonData = pm.response.json();",
+                      "var cashbackBalance = jsonData.data.user_details.cashback_balance;",
+                      "var campaignId = jsonData.data.campaigns[0].campaign_id;",
+                      "",
+                      "pm.environment.set(\"auto_cashback_balance\", cashbackBalance);",
+                      "pm.environment.set(\"auto_campaign_id\", campaignId);"
+                    ],
+                    "type": "text/javascript",
+                    "id": "6f760c3b-50e0-4755-a1cd-b01987e8a531"
+                  }
+                }
+              ],
+              "id": "fabd0fc7-9876-4058-97fe-6a212f0b1ccc",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-NMerchantId",
+                    "value": "{{auto_merchant_id}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "X-NChecksum",
+                    "value": "{{checksum}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "X-NTimestamp",
+                    "value": "{{timestamp}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"customer_id\": \"{{user_podC_customerId}}\",\n    \"amount\" : \"10.00\",\n    \"return_campaign\" : \"true\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "{{url}}/mgw/trusted/customer/v1/details",
+                "description": "apiCustomerDetailsSuccess"
+              },
+              "response": []
+            }
+          ],
+          "id": "687f8641-8285-44a2-8478-8ac9f05b51dc",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  ""
+                ],
+                "id": "c844d6d4-6cc0-42e6-b088-13b1ed6a9fe6"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.environment.unset(\"timestamp\");",
+                  "pm.environment.unset(\"checksum\");"
+                ],
+                "id": "decaf954-be88-42fb-93f0-a5241a8d4a05"
+              }
+            }
+          ]
+        },
+        {
+          "name": "flow3-NewCard",
+          "item": [
+            {
+              "name": "custDtlsBeforeDebitNewCardSuccess",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "console.log(\"Entering : \" + pm.info.requestName);",
+                      "",
+                      "// Prepare prescript data",
+                      "var timestamp = _.now();",
+                      "pm.environment.set(\"auto_pay_amount\", _.random (20,100));",
+                      "",
+                      "var reqBody = pm.request.body.toString();",
+                      "reqBody = reqBody.replace(\"{{user_podC_customerId}}\", pm.environment.get(\"user_podC_customerId\"));",
+                      "reqBody = reqBody.replace(\"{{auto_pay_amount}}\", pm.environment.get(\"auto_pay_amount\"));",
+                      "reqBody = reqBody.replace(/\\s/g,'');",
+                      "",
+                      "var input = timestamp+\"|\"+reqBody;",
+                      "",
+                      "// Calculate checksum",
+                      "var hash = CryptoJS.HmacSHA256(input, pm.environment.get(\"auto_checksum_key\"));",
+                      "var checksum = CryptoJS.enc.Base64.stringify(hash);",
+                      "",
+                      "// Set Environment Variables",
+                      "pm.environment.set('checksum', checksum);",
+                      "pm.environment.set('timestamp', timestamp);"
+                    ],
+                    "type": "text/javascript",
+                    "id": "39c9f6e3-e52f-475a-b8dc-2de74c1eda34"
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "var jsonData = pm.response.json();",
+                      "pm.test(\"Status is OK\", function () {",
+                      "    pm.expect(jsonData.status).to.eql('OK');",
+                      "});",
+                      "",
+                      "// Verify that campaign id is not null",
+                      "pm.test(\"Status is OK\", function () {",
+                      "    pm.expect(jsonData.status).to.eql('OK');",
+                      "});",
+                      "",
+                      "pm.test(\"The response does not contain any data in campaigns\", function () {",
+                      "    pm.expect(jsonData.data.campaigns.length).to.be.eql(0);",
+                      "});",
+                      "",
+                      "var cashbackBalance = jsonData.data.user_details.cashback_balance;",
+                      "var availableBalance = jsonData.data.user_details.available_balance;",
+                      "pm.environment.set(\"auto_cashback_balance\", cashbackBalance);",
+                      "pm.environment.set(\"auto_available_balance\", availableBalance);"
+                    ],
+                    "type": "text/javascript",
+                    "id": "a1adb565-668d-402d-90e8-6f02e95122f8"
+                  }
+                }
+              ],
+              "id": "e74ee850-1f01-40d4-be97-d86f9144ed27",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-NMerchantId",
+                    "value": "{{auto_merchant_id}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "X-NChecksum",
+                    "value": "{{checksum}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "X-NTimestamp",
+                    "value": "{{timestamp}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"customer_id\": \"{{user_podC_customerId}}\",\n    \"amount\" : \"{{auto_pay_amount}}\",\n    \"return_campaign\" : false\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "{{url}}/mgw/trusted/customer/v1/details",
+                "description": "apiCustomerDetailsSuccess"
+              },
+              "response": []
+            },
+            {
+              "name": "debitNewCardSuccess",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "console.log(\"Entering : \" + pm.info.requestName);",
+                      "",
+                      "// Prepare prescript data",
+                      "var timestamp = _.now();",
+                      "var reqBody = pm.request.body.toString();",
+                      "pm.environment.set(\"auto_merchant_txn_id\", \"MTXN\" + timestamp);",
+                      "",
+                      "reqBody = reqBody.replace(\"{{user_podC_customerId}}\", pm.environment.get(\"user_podC_customerId\"));",
+                      "reqBody = reqBody.replace(\"{{auto_cashback_balance}}\", pm.environment.get(\"auto_cashback_balance\"));",
+                      "reqBody = reqBody.replace(\"{{auto_pay_amount}}\", pm.environment.get(\"auto_pay_amount\"));",
+                      "reqBody = reqBody.replace(\"{{auto_merchant_txn_id}}\", pm.environment.get(\"auto_merchant_txn_id\"));",
+                      "reqBody = reqBody.replace(\"{{auto_campaign_txn_id}}\", pm.environment.get(\"auto_campaign_txn_id\"));",
+                      "reqBody = reqBody.replace(/\\s/g,'');",
+                      "",
+                      "var input = timestamp+\"|\"+reqBody;",
+                      "",
+                      "// Calculate checksum",
+                      "var hash = CryptoJS.HmacSHA256(input, pm.environment.get(\"auto_checksum_key\"));",
+                      "var checksum = CryptoJS.enc.Base64.stringify(hash);",
+                      "",
+                      "// Set Environment Variables",
+                      "pm.environment.set('checksum', checksum);",
+                      "pm.environment.set('timestamp', timestamp);",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "id": "1bbdb1ed-9a27-46a2-abfc-e0c6cda092bf"
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "var jsonData = pm.response.json();",
+                      "pm.test(\"Status is OK\", function () {",
+                      "    pm.expect(jsonData.status).to.eql('OK');",
+                      "});",
+                      "",
+                      "pm.test(\"Verify Transaction Status should be IN_PROGRESS\", function () {",
+                      "    pm.expect(jsonData.data.status).to.eql(\"IN_PROGRESS\");",
+                      "});",
+                      "",
+                      "var merTxnId = jsonData.data.merchant_txn_id;",
+                      "pm.test(\"Verify that merchant_txn_id is not null\", function () {",
+                      "    pm.expect(merTxnId).not.to.be.null;",
+                      "});",
+                      "",
+                      "var redirectUrl = jsonData.data.redirect_url;",
+                      "pm.environment.set(\"auto_redirect_url\", redirectUrl);",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "id": "cc8ffd6f-9248-4207-afcc-ccb91065c28c"
+                  }
+                }
+              ],
+              "id": "9ddebeed-7d72-4fdc-b461-2425917c2755",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-NMerchantId",
+                    "value": "{{auto_merchant_id}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "X-NChecksum",
+                    "value": "{{checksum}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "X-NTimestamp",
+                    "value": "{{timestamp}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n        \"customer_id\" : \"{{user_podC_customerId}}\",\n        \"amount\" : \"{{auto_pay_amount}}\",\n        \"merchant_txn_id\" : \"{{auto_merchant_txn_id}}\",\n        \"redirect_url\" : \"https://www.nostg.com/uae-en/payment?order=NAEC600604728\",\n        \"card\" : {\n            \"new_card\" : {\n                \"card_number\" : \"SMlHWK8gSBqO+W2EpvXysygLBU2RkIH7kST4hCWK+YZFnFzTwPx/ipd4BnsUvXzOWWN9JJjPe9DGASTI+t1bVC3gwXuy1POtWsn6R1Tx06w+xh1mPT3RCHjmsidlSDKpO47JzVUsAbAV+1KE8Z/atv6MuDKYxgzHbqKKzAxxCqJTvkY8HJmQ8dWXVIGIw/rOmDIgcz3KvQ0ICENDUhe+4D5njax4opzIkC5EWuLE/3gwuGTT/rHpDrQGJX/PCDGEt/xRsoziSfpGOCa8xNfZEnbowisV28saK4QMbJmqwE2c26fI2hLMgxsEs7xIH2czQ8abrRPpFPsNx2KWFBi5Vg==\",\n                \"expiry_month\" : \"08\",\n                \"expiry_year\" : \"22\",\n                \"cvv\" : \"111\",\n                \"save_card\" : true\n            },\n            \"use_wallet_balance\" : false\n        }\n    }",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "{{url}}/mgw/trusted/checkout/transaction/v1/debit"
+              },
+              "response": []
+            },
+            {
+              "name": "hitNewCardsRedirectURL",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "// Load the HTML response to $",
+                      "const $ = cheerio.load(pm.response.text());",
+                      "",
+                      "// Use the jQuery selector API to get different elements on the page",
+                      "console.log($(\"title\").text()); // get title",
+                      "pm.test(\"Verify the Page Title of the html response\", function() {",
+                      "    pm.expect($(\"title\").text()).to.be.eql('Payment Page');",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "id": "da8099b0-0cf1-4ed7-b7ce-90cd369504d5"
+                  }
+                },
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "console.log(\"Entering : \" + pm.info.requestName);"
+                    ],
+                    "type": "text/javascript",
+                    "id": "6c888732-adef-4243-8086-8f393f7232f0"
+                  }
+                }
+              ],
+              "id": "b04fbdfb-d80e-4978-8718-83c4d88b8559",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": "{{auto_redirect_url}}"
+              },
+              "response": []
+            },
+            {
+              "name": "debitNewCardTxnStatusSuccess",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "console.log(\"Entering : \" + pm.info.requestName);",
+                      "",
+                      "// Prepare prescript data",
+                      "var timestamp = _.now();",
+                      "var reqBody = pm.request.body.toString();",
+                      "",
+                      "reqBody = reqBody.replace(\"{{auto_merchant_txn_id}}\", pm.environment.get(\"auto_merchant_txn_id\"));",
+                      "reqBody = reqBody.replace(/\\s/g,'');",
+                      "",
+                      "var input = timestamp+\"|\"+reqBody;",
+                      " ",
+                      "// Calculate checksum",
+                      "var hash = CryptoJS.HmacSHA256(input, pm.environment.get(\"auto_checksum_key\"));",
+                      "var checksum = CryptoJS.enc.Base64.stringify(hash);",
+                      "",
+                      "// Set Environment Variables",
+                      "pm.environment.set('checksum', checksum);",
+                      "pm.environment.set('timestamp', timestamp);",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "id": "05efa25a-adef-4aa4-9a93-311c8eb5a19f"
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "var jsonData = pm.response.json();",
+                      "pm.test(\"Status is OK\", function () {",
+                      "    pm.expect(jsonData.status).to.eql('OK');",
+                      "});",
+                      "",
+                      "var actualAmount = jsonData.data.amount;",
+                      "var expAmount = Number(pm.environment.get(\"auto_pay_amount\"));",
+                      "var actualMerTrxnId = jsonData.data.merchant_txn_id;",
+                      "var expMerTrxnId = pm.environment.get(\"auto_merchant_txn_id\");",
+                      "",
+                      "pm.test(\"Verify that the amount is correct as the debit trxn.\", function () {",
+                      "    pm.expect(actualAmount).to.eql(expAmount);",
+                      "});",
+                      "",
+                      "pm.test(\"Verify that the merchant_txn_id is correct as the debit trxn.\", function () {",
+                      "    pm.expect(actualMerTrxnId).to.eql(expMerTrxnId);",
+                      "});",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "id": "25d05ba3-4c87-48a9-97fe-53bb1700dfa9"
+                  }
+                }
+              ],
+              "id": "fea2ec41-ddb8-4c81-8308-9a93bd64b9f3",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-NMerchantId",
+                    "value": "{{auto_merchant_id}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "X-NChecksum",
+                    "value": "{{checksum}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "X-NTimestamp",
+                    "value": "{{timestamp}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"merchant_txn_id\": \"{{auto_merchant_txn_id}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "{{url}}/mgw/trusted/checkout/transaction/v2/status"
+              },
+              "response": []
+            },
+            {
+              "name": "custDtlsAfterDebitNewCardSuccess",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "console.log(\"Entering : \" + pm.info.requestName);",
+                      "",
+                      "// Prepare prescript data",
+                      "var timestamp = _.now();",
+                      "var reqBody = pm.request.body.toString();",
+                      "",
+                      "reqBody = reqBody.replace(\"{{user_podC_customerId}}\", pm.environment.get(\"user_podC_customerId\"));",
+                      "reqBody = reqBody.replace(/\\s/g,'');",
+                      "",
+                      "var input = timestamp+\"|\"+reqBody;",
+                      "",
+                      "// Calculate checksum",
+                      "var hash = CryptoJS.HmacSHA256(input, pm.environment.get(\"auto_checksum_key\"));",
+                      "var checksum = CryptoJS.enc.Base64.stringify(hash);",
+                      "",
+                      "// Set Environment Variables",
+                      "pm.environment.set('checksum', checksum);",
+                      "pm.environment.set('timestamp', timestamp);"
+                    ],
+                    "type": "text/javascript",
+                    "id": "c626155f-a41b-4bcb-a5ce-2fb25f592357"
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 200\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "var jsonData = pm.response.json();",
+                      "pm.test(\"Status is OK\", function () {",
+                      "    pm.expect(jsonData.status).to.eql('OK');",
+                      "});",
+                      "",
+                      "// verify cashback balance is decreased by the debit transaction amount",
+                      "var cashbackBalanceAfterTrxn = jsonData.data.user_details.cashback_balance;",
+                      "var expectedCashbackBalance =     Number(pm.environment.get(\"auto_cashback_balance\"));",
+                      "",
+                      "pm.test(\"Verify that the cashback amount is same after the debit trxn.\", function () {",
+                      "    pm.expect(cashbackBalanceAfterTrxn).to.eql(expectedCashbackBalance);",
+                      "});",
+                      "",
+                      "// Verify available balance should remain the same as trxn happened through card",
+                      "var availableBalanceAfterTrxn = jsonData.data.user_details.available_balance;",
+                      "var expectedAvailableBalance =  Number(pm.environment.get(\"auto_available_balance\"));",
+                      "",
+                      "pm.test(\"Verify that the available balance amount is same after the debit trxn.\", function () {",
+                      "    pm.expect(availableBalanceAfterTrxn).to.eql(expectedAvailableBalance);",
+                      "});",
+                      "",
+                      "// Unset the environment variables",
+                      "console.log(\"Clearing the environment variables.\");",
+                      "pm.environment.unset(\"auto_cashback_balance\");",
+                      "pm.environment.unset(\"auto_campaign_txn_id\");",
+                      "pm.environment.unset(\"auto_exp_cashback_amount\");",
+                      "pm.environment.unset(\"auto_available_balance\");",
+                      "pm.environment.unset(\"auto_pay_amount\");",
+                      "pm.environment.unset(\"auto_merchant_txn_id\");",
+                      "pm.environment.unset(\"timestamp\");",
+                      "pm.environment.unset(\"checksum\");"
+                    ],
+                    "type": "text/javascript",
+                    "id": "0ce8ac68-350a-4a2a-b128-5c13296d807e"
+                  }
+                }
+              ],
+              "id": "4bf22e7f-d5d5-4b2b-bc2c-9e5977b4f29d",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-NMerchantId",
+                    "value": "{{auto_merchant_id}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "X-NChecksum",
+                    "value": "{{checksum}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "X-NTimestamp",
+                    "value": "{{timestamp}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"customer_id\": \"{{user_podC_customerId}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": "{{url}}/mgw/trusted/customer/v1/details",
+                "description": "apiCustomerDetailsSuccess"
+              },
+              "response": []
+            }
+          ],
+          "id": "e8573a49-52e6-41c6-8e85-1437be2473ac",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  ""
+                ],
+                "id": "ac80ebc3-22c0-414f-b262-0e6ab6df3f43"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.environment.unset(\"timestamp\");",
+                  "pm.environment.unset(\"checksum\");"
+                ],
+                "id": "0590b53d-cc4b-4a00-bb05-c00c2129d9fe"
+              }
+            }
+          ]
+        }
+      ],
+      "id": "a31eb0ae-0aa6-40cd-9a16-4d0048803184"
     }
   ],
   "event": [
@@ -516,12 +1939,12 @@
   ],
   "variable": [
     {
-      "id": "18535498-3227-45bb-bb28-14ade9811ea9",
+      "id": "b8b6af78-e3ee-4682-a285-31da5b8e8c43",
       "key": "feature",
       "value": "REMITTANCE"
     },
     {
-      "id": "d43571ba-5074-4384-9f6a-85ee5f0687cf",
+      "id": "14a69cd9-98b3-4ea5-bab7-97cb7786fa3b",
       "key": "bootstrapCollection",
       "value": "true"
     }
