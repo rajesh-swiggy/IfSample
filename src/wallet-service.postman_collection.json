@@ -1939,14 +1939,29 @@
   ],
   "variable": [
     {
-      "id": "3c855956-4ad3-4d8b-aad8-3336c054c794",
+      "id": "3b651d4c-221f-4b16-a6cf-5f0e3b87f1eb",
       "key": "feature",
       "value": "REMITTANCE"
     },
     {
-      "id": "0159a0a8-bb2b-4d2a-8660-6780b449f46a",
+      "id": "18e7960a-73b8-45ad-b06e-8ea7c2342545",
       "key": "bootstrapCollection",
       "value": "true"
+    },
+    {
+      "id": "dda56f95-10c8-4191-8030-143656de206d",
+      "key": "pay_amount",
+      "value": ""
+    },
+    {
+      "id": "9ec1bb86-045a-4288-b56e-7c79d8c59ef1",
+      "key": "checksum",
+      "value": ""
+    },
+    {
+      "id": "4f30c7e5-1dc9-46ae-be44-fbf033d53e1f",
+      "key": "timestamp",
+      "value": ""
     }
   ]
 }
