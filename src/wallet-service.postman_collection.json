@@ -366,6 +366,11 @@
       "description": "This is the folder description"
     },
     {
+      "name": "GET USER DETAILS",
+      "item": [],
+      "id": "20ca69c6-b4e0-4013-bea1-cdf0a6ac4106"
+    },
+    {
       "name": "TrustedMerchantPosFlow",
       "item": [
         {
@@ -1911,11 +1916,6 @@
         }
       ],
       "id": "915d5b97-46c5-4df2-aaae-b3018b4e21f8"
-    },
-    {
-      "name": "GET USER DETAILS",
-      "item": [],
-      "id": "20ca69c6-b4e0-4013-bea1-cdf0a6ac4106"
     }
   ],
   "event": [
@@ -1944,27 +1944,27 @@
   ],
   "variable": [
     {
-      "id": "f0d78535-42c3-4c94-a582-7068669feaf3",
+      "id": "c9000bc2-8afd-42e5-8f83-d9c470b4779e",
       "key": "feature",
       "value": "REMITTANCE"
     },
     {
-      "id": "59b3312f-191b-45bd-8608-2a0bf4363688",
+      "id": "7071da1e-c8e6-49eb-8ffe-38b34bfed202",
       "key": "bootstrapCollection",
       "value": "true"
     },
     {
-      "id": "ffd9ea0f-5d50-4d72-b803-86a0cb58139d",
+      "id": "afa2a8a6-e777-4971-8c1e-85be352b04b8",
       "key": "pay_amount",
       "value": ""
     },
     {
-      "id": "35fd5b78-8e5d-40d6-94f3-4db75eb8854a",
+      "id": "e7be6070-8fa4-4d52-940a-c65979778b34",
       "key": "checksum",
       "value": ""
     },
     {
-      "id": "5b154f22-090a-40be-a9dc-1cd75dc2099f",
+      "id": "de9cfe8f-0bdd-4baf-b915-301de8ef4532",
       "key": "timestamp",
       "value": ""
     }
